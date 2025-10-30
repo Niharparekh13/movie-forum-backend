@@ -1,0 +1,10 @@
+{
+  "name": "Local",
+  "values": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "enabled": true },
+    { "key": "adminToken", "value": "", "enabled": true },
+    { "key": "token", "value": "", "enabled": true },
+    { "key": "movieId", "value": "", "enabled": true },
+    { "key": "reviewId", "value": "", "enabled": true }
+  ]
+}

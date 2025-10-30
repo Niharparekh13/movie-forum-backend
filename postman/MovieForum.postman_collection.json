@@ -1,0 +1,122 @@
+{
+  "info": { "name": "Movie Forum API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 health', ()=>pm.response.to.have.status(200));"
+      ]}}]
+    },
+    {
+      "name": "Auth - Login (ADMIN)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\"email\":\"admin@example.com\",\"password\":\"AdminPass123!\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 login admin', ()=>pm.response.to.have.status(200));",
+        "pm.environment.set('adminToken', pm.response.json().data.token);"
+      ]}}]
+    },
+    {
+      "name": "Auth - Login (USER)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": { "mode": "raw", "raw": "{\"email\":\"user@example.com\",\"password\":\"User@123\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 login user', ()=>pm.response.to.have.status(200));",
+        "pm.environment.set('token', pm.response.json().data.token);"
+      ]}}]
+    },
+    {
+      "name": "Movies - List (pagination)",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/movies?page=1&limit=5" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 list', ()=>pm.response.to.have.status(200));",
+        "const j = pm.response.json(); pm.expect(j).to.have.property('meta');"
+      ]}}]
+    },
+    {
+      "name": "Movies - Search",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/movies/search?q=ince&limit=5" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 search', ()=>pm.response.to.have.status(200));"
+      ]}}]
+    },
+    {
+      "name": "Movies - Create (ADMIN 201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/movies",
+        "body": { "mode": "raw", "raw": "{\"title\":\"Tenet\",\"genre\":\"Sci-Fi\",\"releaseYear\":2020,\"runtimeMin\":150,\"description\":\"Time inversion\",\"slug\":\"tenet-2020\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('201 created', ()=>pm.response.to.have.status(201));",
+        "pm.environment.set('movieId', pm.response.json().data.id);"
+      ]}}]
+    },
+    {
+      "name": "Movies - Create (USER should 403)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/movies",
+        "body": { "mode": "raw", "raw": "{\"title\":\"Foo\",\"genre\":\"Sci-Fi\",\"releaseYear\":2020,\"runtimeMin\":120,\"description\":\"N/A\",\"slug\":\"foo-2020\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('403 forbidden', ()=>pm.response.to.have.status(403));"
+      ]}}]
+    },
+    {
+      "name": "Reviews - Create (USER 201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": "{{baseUrl}}/api/reviews",
+        "body": { "mode": "raw", "raw": "{\"movieId\": {{movieId}}, \"rating\": 9, \"title\": \"Great\", \"comment\": \"Loved it\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('201 review created', ()=>pm.response.to.have.status(201));",
+        "pm.environment.set('reviewId', pm.response.json().data.id);"
+      ]}}]
+    },
+    {
+      "name": "Reviews - Update by NON-owner (403)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/reviews/{{reviewId}}",
+        "body": { "mode": "raw", "raw": "{\"rating\": 8, \"title\": \"Edited by admin\", \"comment\": \"Should be forbidden\"}" }
+      },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('403 ownership enforced', ()=>pm.response.to.have.status(403));"
+      ]}}]
+    },
+    {
+      "name": "Reviews - List by Movie",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/reviews/movie/{{movieId}}" },
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('200 list reviews', ()=>pm.response.to.have.status(200));"
+      ]}}]
+    }
+  ]
+}

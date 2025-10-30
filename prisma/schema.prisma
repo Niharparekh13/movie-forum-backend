@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique
+  email              String    @unique
+  passwordHash       String
+  role               Role      @default(USER)
+  status             Status    @default(ACTIVE)
+  avatarUrl          String?
+  bio                String?
+  lastLoginAt        DateTime?
+  passwordUpdatedAt  DateTime?
+  failedLoginCount   Int       @default(0)
+  mfaEnabled         Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  movies             Movie[]
+  reviews            Review[]
+}
+
+model Movie {
+  id              Int       @id @default(autoincrement())
+  title           String
+  genre           String
+  releaseYear     Int
+  description     String
+  averageRating   Float     @default(0)
+  ratingCount     Int       @default(0)
+  posterUrl       String?
+  imdbId          String?   @unique
+  runtimeMin      Int
+  slug            String    @unique
+  isPublic        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  createdByUserId Int
+  createdBy       User      @relation(fields: [createdByUserId], references: [id])
+  reviews         Review[]
+
+  @@index([title, releaseYear])
+}
+
+model Review {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  movieId      Int
+  rating       Int
+  title        String
+  comment      String
+  isEdited     Boolean    @default(false)
+  likesCount   Int        @default(0)
+  reportsCount Int        @default(0)
+  spoiler      Boolean    @default(false)
+  visibility   Visibility @default(PUBLIC)
+  sentiment    Sentiment?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id])
+  movie Movie @relation(fields: [movieId], references: [id])
+
+  @@unique([userId, movieId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  BANNED
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+enum Sentiment {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
