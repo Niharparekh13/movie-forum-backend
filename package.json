@@ -11,16 +11,13 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "start:prod": "node dist/server.js",
-
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
-
     "test": "set NODE_OPTIONS=--experimental-vm-modules&& jest --runInBand --config jest.config.cjs",
     "test:watch": "set NODE_OPTIONS=--experimental-vm-modules&& jest --watch --config jest.config.cjs",
     "test:coverage": "set NODE_OPTIONS=--experimental-vm-modules&& jest --coverage --runInBand --config jest.config.cjs",
-
     "generate": "prisma generate",
     "prepare": "prisma generate",
     "migrate": "prisma migrate dev",
@@ -29,7 +26,6 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "db:seed": "prisma db seed",
     "db:reset": "npm run migrate:reset && npm run seed",
-
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
@@ -38,6 +34,7 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
@@ -67,4 +64,3 @@
     "seed": "tsx prisma/seed.ts"
   }
 }
-

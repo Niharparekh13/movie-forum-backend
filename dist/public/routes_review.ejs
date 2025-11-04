@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Review API Routes</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f7fa; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; }
+    th { background: #f0f0f0; }
+    .method { font-weight: bold; color: white; padding: 2px 6px; border-radius: 4px; }
+    .GET { background: #2b90d9; }
+    .POST { background: #43a047; }
+    .PUT { background: #f9a825; }
+    .DELETE { background: #e53935; }
+  </style>
+</head>
+<body>
+  <h1>🎬 Review API Routes</h1>
+  <p>Base URL: <code>/api/reviews</code></p>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr>
+    </thead>
+    <tbody>
+      <% routes.forEach(route => { %>
+        <tr>
+          <td><span class="method <%= route.method %>"><%= route.method %></span></td>
+          <td><code><%= route.path %></code></td>
+          <td><%= route.description %></td>
+          
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>

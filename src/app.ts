@@ -5,8 +5,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 // IMPORTANT: no ".js" extensions so ts-jest can resolve the TS sources
-import router from './routes/index';
-import { notFound, errorHandler } from './middleware/error';
+import router from './routes/index.js';
+import { notFound, errorHandler } from './middleware/error.js';
 
 const app = express();
 
